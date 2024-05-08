@@ -1,0 +1,28 @@
+body {
+    background: linear-gradient(135deg, #FFA500 0%, #FF6347 100%);
+    font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+    color: #5E5694;
+}
+
+.todo-item {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.todo-item:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.delete-button {
+    background-color: transparent;
+    border: none;
+    color: #ff7675;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    color: #e74c3c;
+}

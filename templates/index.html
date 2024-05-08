@@ -1,97 +1,85 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List</title>
-    <!-- Tailwind CSS -->
+    <title>Todo App</title>
+    <script src="https://unpkg.com/htmx.org@1.6.0/dist/htmx.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+    <link rel="stylesheet" href="{% static '/css/style.css' %}">
 
-
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Poppins', sans-serif;
-        }
-
-        h1 {
-            color: #5E5694;
-        }
-
-        .todo-item {
-            background-color: rgba(255, 255, 255, 0.8);
-        }
-
-        .todo-item:hover {
-            background-color: rgba(255, 255, 255, 1);
-        }
-
-        .delete-button {
-            background-color: transparent;
-            border: none;
-            color: #ff7675;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .delete-button:hover {
-            color: #e74c3c;
-        }
-    </style>
 </head>
-<body class="py-10 px-4 sm:px-6 lg:px-8">
-<div class="max-w-md mx-auto bg-white rounded shadow overflow-hidden">
-    <div class="p-4">
-        <h1 class="text-3xl font-bold mb-4">Todo List</h1>
-        <ul id="todo-list">
-            {% for todo in todos %}
-            <li>
-                <input type="checkbox" {% if todo.is_completed %} checked {% endif %} disabled>
-                {{ todo.content }}
-            </li>
-            {% endfor %}
-        </ul>
-        <form id="add-todo-form" hx-post="{% url 'add_todo' %}" hx-target="#todo-list">
-            {% csrf_token %}
-            <input type="text" id="content" name="content" required>
-            <button id="add-todo-button" type="submit">Add Todo</button>
-        </form>
-    </div>
+<body class="flex justify-center items-center h-screen bg-gray-100">
+<div class="max-w-md w-full p-6 rounded-lg shadow-md" style="background-color: rgba(255, 255, 255, 0.8);">
+    <h1 class="text-2xl mb-4">Todo List</h1>
+    <form id="add-todo-form" data-hx-post="{% url 'add_todo' %}" class="mt-4 grid grid-cols-3 gap-2 mb-5">
+        <input type="text" id="todo-content" name="content" placeholder="Add..."
+               class="col-span-2 w-full py-2 px-3 rounded border border-gray-300">
+        <button type="submit" class="col-span-1 text-white px-2 py-2 rounded" style="background: chocolate">Add</button>
+    </form>
+    <ul id="todo-list" class="list-none">
+        {% for todo in todos %}
+        <li id="todo-{{ todo.id }}" class="flex items-center mb-2">
+            <input type="checkbox" {% if todo.is_completed %}checked{% endif %}
+                   onchange="toggleCompletion(this, {{ todo.id }})"
+                   data-hx-post="{% url 'toggle_completion' todo.id %}"
+                   class="mr-2">
+            <span class="text-lg flex-1 {% if todo.is_completed %}line-through text-gray-500{% endif %}">{{ todo.content }}</span>
+
+            <button type="submit"
+                    data-hx-post="{% url 'delete-todo' todo.id %}"
+
+                    class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">
+                Delete
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+
+
 </div>
-</body>
-</html>
-<script src="https://code.jquery.com/jquery-3.6.2.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const addTodoForm = document.getElementById('add-todo-form');
-        const todoInput = document.getElementById('content');
-        const addTodoButton = document.getElementById('add-todo-button');
-
-        addTodoForm.addEventListener('submit', function (event) {
+        document.getElementById('add-todo-form').addEventListener('submit', function (event) {
             event.preventDefault();
-
-            const formData = new FormData(addTodoForm);
-
-            fetch(addTodoForm.getAttribute('action'), {
+            var form = this;
+            var url = form.getAttribute('data-hx-post');
+            var formData = new FormData(form);
+            var content = formData.get('content');
+            fetch(url, {
                 method: 'POST',
-                body: formData,
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({content: content}) // İçeriği JSON olarak gönder
             })
                 .then(response => response.json())
                 .then(data => {
-                    const todoList = document.getElementById('todo-list');
-
-                    addTodoForm.reset();
+                    if (data.success) {
+                        var todoList = document.getElementById('todo-list');
+                        var todoItem = document.createElement('li');
+                        todoItem.id = 'todo-' + data.todo_id;
+                        todoItem.innerHTML = `
+                    <input type="checkbox"
+                        onchange="toggleCompletion(this, ${data.todo_id})"
+                        data-hx-post="{% url 'toggle_completion' 0 %}">
+                    ${data.content}
+                `;
+                        todoList.appendChild(todoItem);
+                        form.reset();
+                    } else {
+                        console.error('Görev eklenemedi');
+                    }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => console.error('Hata:', error));
         });
-
     });
 
-
 </script>
+</body>
+</html>
