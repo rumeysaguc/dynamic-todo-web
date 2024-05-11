@@ -31,3 +31,7 @@ To run this application locally, you'll need Docker and Docker Compose installed
     ```
     http://localhost:8000/api/tasks
     ```
+
+This is project frontend.
+![image](https://github.com/rumeysaguc/coderspace-todo-task/assets/70983764/6b166c24-92b2-4618-afb5-10defbd27f73)
+
