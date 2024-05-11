@@ -25,7 +25,7 @@ urlpatterns = [
                   path('', index, name="index"),
                   path('api/tasks', TodoListAPIView.as_view(), name="index"),
 
-                  path('toggle-completion/<int:todo_id>/', toggle_completion, name='toggle_completion'),
+                  path('toggle-completion/<int:todo_id>/', toggle_completion, name='toggle-completion'),
                   path('add-todo/', add_todo, name='add_todo'),
                   path('delete-todo/<int:todo_id>', delete, name='delete-todo'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,

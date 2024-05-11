@@ -26,7 +26,7 @@
         <li id="todo-{{ todo.id }}" class="flex items-center mb-2">
             <input type="checkbox" {% if todo.is_completed %}checked{% endif %}
                    onchange="toggleCompletion(this, {{ todo.id }})"
-                   data-hx-post="{% url 'toggle_completion' todo.id %}"
+                   data-hx-post="{% url 'toggle-completion' todo.id %}"
                    class="mr-2">
             <span class="text-lg flex-1 {% if todo.is_completed %}line-through text-gray-500{% endif %}">{{ todo.content }}</span>
 
