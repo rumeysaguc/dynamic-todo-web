@@ -8,7 +8,7 @@ This is a todo web application built using Django for the backend, htmx for dyna
 - **htmx:** Htmx is a library used for adding dynamic behavior to web pages. In our application, htmx is used for performing backend operations without page reloads.
 - **Tailwind CSS:** Tailwind CSS is a utility-first CSS framework used for styling the user interface of our application.
 - **Django Rest Framework:** Django Rest Framework is employed for serializing data and building RESTful APIs.
-- **Flake8:** I used flake8 becouse of formatting my python code. (flake8 example.py and black example.py
+- **Flake8:** I used flake8 becouse of formatting my python code. (flake8 example.py and black example.py)
 
 ## Getting Started
 
