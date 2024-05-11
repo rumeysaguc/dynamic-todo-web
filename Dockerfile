@@ -12,10 +12,10 @@ RUN pip install -r $DockerHOME/requirements.txt
 WORKDIR $DockerHOME
 
 # copy whole project to your docker home directory.
-COPY . $DockerHOME
+COPY . .
 
 # port where the Django app runs
 EXPOSE 8000
 
 # start server
-CMD python manage.py runserver
+CMD python coderspace-todo-task/manage.py runserver
